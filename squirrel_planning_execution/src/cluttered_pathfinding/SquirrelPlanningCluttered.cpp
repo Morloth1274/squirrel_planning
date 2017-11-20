@@ -193,7 +193,7 @@ namespace KCL_rosplan {
 				knowledge_item.values.push_back(kv);
 				
 				std::stringstream ss2;
-				ss << object << "_" << *ci2 << "_wp";
+				ss2 << object << "_" << *ci2 << "_wp";
 				
 				kv.key = "wp2";
 				kv.value = ss2.str();
@@ -249,7 +249,7 @@ namespace KCL_rosplan {
 		
 		diagnostic_msgs::KeyValue kv;
 		kv.key = "v";
-		kv.value = "robot";
+		kv.value = "kenny";
 		knowledge_item.values.push_back(kv);
 		
 		kv.key = "wp";
