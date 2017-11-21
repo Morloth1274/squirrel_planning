@@ -46,7 +46,7 @@ namespace KCL_rosplan {
 		//pddl_generation_service = nh.advertiseService("/kcl_rosplan/generate_planning_problem", &KCL_rosplan::SquirrelPlanningCluttered::generatePDDLProblemFile, this);
 		
 		// Test finding paths.
-		nav_grid_sub = nh.subscribe("complete_grid", 1, &KCL_rosplan::SquirrelPlanningCluttered::storeNavigationGrid, this);
+		nav_grid_sub = nh.subscribe("/map", 1, &KCL_rosplan::SquirrelPlanningCluttered::storeNavigationGrid, this);
 		find_path_service = nh.serviceClient<squirrel_navigation_msgs::ClutterPlannerSrv>("/clutter_service");
 		
 		find_objects_service = nh.serviceClient<squirrel_manipulation_msgs::GetObjectPositions>("/getObjectsPositions");
