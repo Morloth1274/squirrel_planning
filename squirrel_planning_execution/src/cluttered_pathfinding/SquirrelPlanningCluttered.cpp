@@ -1,5 +1,7 @@
 #include <std_msgs/Int8.h>
 
+#include <tf/tf.h>
+#include <tf/transform_listener.h>
 #include <ros/ros.h>
 #include <map>
 #include <algorithm>
@@ -67,6 +69,7 @@ namespace KCL_rosplan {
 		}
 		
 		std::vector<std::string> waypoints;
+		waypoints.push_back("kenny_waypoint");
 		std::vector<std::string> objects;
 		for (unsigned int i = 0; i < op.response.objectids.size(); ++i)
 		{
@@ -99,7 +102,7 @@ namespace KCL_rosplan {
 			ss << op.response.objectids[i] << "_north_wp";
 			waypoints.push_back(ss.str());
 			
-			message_store.insertNamed(ss.str(), push_location);
+			message_store.insertNamed(ss.str(), pose);
 			
 			// South.
 			pose.pose = push_location;
@@ -109,7 +112,7 @@ namespace KCL_rosplan {
 			ss << op.response.objectids[i] << "_south_wp";
 			waypoints.push_back(ss.str());
 			
-			message_store.insertNamed(ss.str(), push_location);
+			message_store.insertNamed(ss.str(), pose);
 			
 			// West.
 			pose.pose = push_location;
@@ -119,7 +122,7 @@ namespace KCL_rosplan {
 			ss << op.response.objectids[i] << "_west_wp";
 			waypoints.push_back(ss.str());
 			
-			message_store.insertNamed(ss.str(), push_location);
+			message_store.insertNamed(ss.str(), pose);
 			
 			// East.
 			pose.pose = push_location;
@@ -129,17 +132,17 @@ namespace KCL_rosplan {
 			ss << op.response.objectids[i] << "_east_wp";
 			waypoints.push_back(ss.str());
 			
-			message_store.insertNamed(ss.str(), push_location);
+			message_store.insertNamed(ss.str(), pose);
 		}
 		
-		
+		/*
 		waypoints.push_back("kenny_waypoint");
 		std::vector<std::string> wind_directions;
 		wind_directions.push_back("north");
 		wind_directions.push_back("south");
 		wind_directions.push_back("west");
 		wind_directions.push_back("east");
-		
+		*/
 		// Create a objects.
 		for (std::vector<std::string>::const_iterator ci = objects.begin(); ci != objects.end(); ++ci)
 		{
@@ -182,31 +185,6 @@ namespace KCL_rosplan {
 			}
 			ROS_INFO("KCL: (SquirrelPlanningCluttered) Added the fact (object_at %s %s) to the knowledge base.", object.c_str(), ss.str().c_str());
 			knowledge_item.values.clear();
-			
-			// Create pushing locations.
-			for (std::vector<std::string>::const_iterator ci2 = wind_directions.begin(); ci2 != wind_directions.end(); ++ci2)
-			{
-				knowledge_item.attribute_name = "pushable_from";
-				
-				kv.key = "wp";
-				kv.value = ss.str();
-				knowledge_item.values.push_back(kv);
-				
-				std::stringstream ss2;
-				ss2 << object << "_" << *ci2 << "_wp";
-				
-				kv.key = "wp2";
-				kv.value = ss2.str();
-				knowledge_item.values.push_back(kv);
-				
-				knowledge_update_service.request.knowledge = knowledge_item;
-				if (!update_knowledge_client.call(knowledge_update_service)) {
-					ROS_ERROR("KCL: (SquirrelPlanningCluttered) Could not add the fact (pushable_from %s %s) to the knowledge base.", ss.str().c_str(), ss2.str().c_str());
-					exit(-1);
-				}
-				ROS_INFO("KCL: (SquirrelPlanningCluttered) Added the fact (pushable_from %s %s) to the knowledge base.", ss.str().c_str(), ss2.str().c_str());
-				knowledge_item.values.clear();
-			}
 		}
 		
 		for (std::vector<std::string>::const_iterator ci = waypoints.begin(); ci != waypoints.end(); ++ci)
@@ -263,6 +241,33 @@ namespace KCL_rosplan {
 		}
 		ROS_INFO("KCL: (SquirrelPlanningCluttered) Added the fact (robot_at robot kenny_waypoint) to the knowledge base.");
 		knowledge_item.values.clear();
+		}
+		
+		// Locate the location of the robot.
+		{
+		tf::StampedTransform transform;
+		tf::TransformListener tfl;
+		try {
+			tfl.waitForTransform("/map","/base_link", ros::Time::now(), ros::Duration(1.0));
+			tfl.lookupTransform("/map", "/base_link", ros::Time(0), transform);
+		} catch ( tf::TransformException& ex ) {
+			ROS_ERROR("KCL: (SquirrelPlanningCluttered) Error find the transform between /map and /base_link.");
+			//exit(1);
+		}
+		
+		// Add this information to the knowledge base.
+		geometry_msgs::PoseStamped pose;
+		pose.header.seq = 0;
+		pose.header.stamp = ros::Time::now();
+		pose.header.frame_id = "/map";
+		pose.pose.position.x = transform.getOrigin().getX();
+		pose.pose.position.y = transform.getOrigin().getY();
+		pose.pose.position.z = transform.getOrigin().getZ();
+		pose.pose.orientation.x = transform.getRotation().getX();
+		pose.pose.orientation.y = transform.getRotation().getY();
+		pose.pose.orientation.z = transform.getRotation().getZ();
+		pose.pose.orientation.w = transform.getRotation().getW();
+		message_store.insertNamed("kenny_waypoint", pose);
 		}
 		
 		// Add a simple goal.
