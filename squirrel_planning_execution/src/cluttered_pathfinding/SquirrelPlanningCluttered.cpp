@@ -70,6 +70,7 @@ namespace KCL_rosplan {
 		
 		std::vector<std::string> waypoints;
 		waypoints.push_back("kenny_waypoint");
+		waypoints.push_back("target_wp");
 		std::vector<std::string> objects;
 		for (unsigned int i = 0; i < op.response.objectids.size(); ++i)
 		{
