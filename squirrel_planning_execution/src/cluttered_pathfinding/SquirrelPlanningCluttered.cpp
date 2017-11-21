@@ -269,19 +269,35 @@ namespace KCL_rosplan {
 		pose.pose.orientation.w = transform.getRotation().getW();
 		message_store.insertNamed("kenny_waypoint", pose);
 		}
+
+		// Add target waypoint.
+		{
+		geometry_msgs::PoseStamped pose;
+		pose.header.seq = 0;
+		pose.header.stamp = ros::Time::now();
+		pose.header.frame_id = "/map";
+		pose.pose.position.x = 1.84;
+		pose.pose.position.y = -8.34;
+		pose.pose.position.z = 0.0;
+		pose.pose.orientation.x = 0;
+		pose.pose.orientation.y = 0;
+		pose.pose.orientation.z = 0;
+		pose.pose.orientation.w = 1;
+		message_store.insertNamed("target_wp", pose);
+		}
 		
 		// Add a simple goal.
 		{
 		rosplan_knowledge_msgs::KnowledgeItem waypoint_goal;
 		waypoint_goal.knowledge_type = rosplan_knowledge_msgs::KnowledgeItem::FACT;
-		waypoint_goal.attribute_name = "robot_at";
+		waypoint_goal.attribute_name = "object_at";
 		diagnostic_msgs::KeyValue kv;
-		kv.key = "v";
-		kv.value = "kenny";
+		kv.key = "o";
+		kv.value = "blue_ball";
 		waypoint_goal.values.push_back(kv);
 		
 		kv.key = "wp";
-		kv.value = "red_ball_wp";
+		kv.value = "target_wp";
 		waypoint_goal.values.push_back(kv);
 			
 		rosplan_knowledge_msgs::KnowledgeUpdateService add_goal;

@@ -25,7 +25,7 @@
 		<param name="strl_file_path" value="$(find squirrel_planning_launch)/common/plan.strl" />
 
 		<!-- to run the planner -->
-	    <param name="planner_command" value="timeout 10 $(find rosplan_planning_system)/common/bin/popf-path-planner -gblind -o DOMAIN -f PROBLEM" />
+	    <param name="planner_command" value="$(find rosplan_planning_system)/common/bin/popf-path-planner -gblind DOMAIN PROBLEM" />
 		<param name="generate_default_problem" value="true" />
 	</node>
 
