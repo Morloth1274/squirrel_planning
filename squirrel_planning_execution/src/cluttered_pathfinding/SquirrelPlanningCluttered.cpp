@@ -97,7 +97,7 @@ namespace KCL_rosplan {
 			
 			// North.
 			pose.pose = push_location;
-			pose.pose.position.y += op.response.diameters[i] / 2.0f + 1.0f;
+			pose.pose.position.y += op.response.diameters[i] / 2.0f + 2.0f;
 			
 			ss.str(std::string());
 			ss << op.response.objectids[i] << "_north_wp";
@@ -107,7 +107,7 @@ namespace KCL_rosplan {
 			
 			// South.
 			pose.pose = push_location;
-			pose.pose.position.y -= op.response.diameters[i] / 2.0f + 1.0f;
+			pose.pose.position.y -= op.response.diameters[i] / 2.0f + 2.0f;
 			
 			ss.str(std::string());
 			ss << op.response.objectids[i] << "_south_wp";
@@ -117,7 +117,7 @@ namespace KCL_rosplan {
 			
 			// West.
 			pose.pose = push_location;
-			pose.pose.position.y -= op.response.diameters[i] / 2.0f - 1.0f;
+			pose.pose.position.x -= op.response.diameters[i] / 2.0f - 2.0f;
 			
 			ss.str(std::string());
 			ss << op.response.objectids[i] << "_west_wp";
@@ -127,7 +127,7 @@ namespace KCL_rosplan {
 			
 			// East.
 			pose.pose = push_location;
-			pose.pose.position.y -= op.response.diameters[i] / 2.0f + 1.0f;
+			pose.pose.position.x -= op.response.diameters[i] / 2.0f + 2.0f;
 			
 			ss.str(std::string());
 			ss << op.response.objectids[i] << "_east_wp";
