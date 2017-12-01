@@ -39,15 +39,14 @@
 	:precondition (and
 		(robot_at ?v ?from)
 		(object_at ?ob ?object_location)
-		(connected ?from ?push_location)
 		(connected ?object_location ?to)
-		(pushable_from ?object_location ?push_location)
+		(pushable_from ?object_location ?from)
 	)
 	:effect (and
 		;; For every state ?s
-		;(not (robot_at ?v ?from))
+		(not (robot_at ?v ?from))
 		(not (object_at ?ob ?object_location))
-		;(robot_at ?v ?to)
+		(robot_at ?v ?to)
 		(object_at ?ob ?to)
 	)
 )
