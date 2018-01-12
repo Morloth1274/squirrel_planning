@@ -10,8 +10,10 @@ namespace KCL_rosplan {
 		// create the push action client
 		ROS_INFO("KCL: (PushAction) waiting for action server to start on %s", pushactionserver.c_str());
 		push_action_client.waitForServer();
-		ROS_INFO("KCL: (PushAction) waiting for action server to start on %s", smashactionserver.c_str());
-		smash_action_client.waitForServer();
+		//ROS_INFO("KCL: (PushAction) waiting for action server to start on %s", smashactionserver.c_str());
+		//smash_action_client.waitForServer();
+		
+		ROS_INFO("KCL: (PushAction) pushing server found on %s!", pushactionserver.c_str());
 
 		// create the action feedback publisher
 		action_feedback_pub = nh.advertise<rosplan_dispatch_msgs::ActionFeedback>("/kcl_rosplan/action_feedback", 10, true);

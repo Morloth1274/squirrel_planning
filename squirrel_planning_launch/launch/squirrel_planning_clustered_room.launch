@@ -8,6 +8,9 @@
 	<!-- domain file -->
 	<param name="/rosplan/domain_path" value="$(find squirrel_planning_launch)/common/cleanroom_popf_domain.pddl" />
 
+	<!-- parser -->
+	<param name="/rosplan_planning_system/parser" value="popf3" />
+
 	<!-- knowledge base -->
 	<node name="rosplan_knowledge_base" pkg="rosplan_knowledge_base" type="knowledgeBase" respawn="false" output="screen" />
 
@@ -20,26 +23,47 @@
 	<!-- planning system -->
 	<node name="rosplan_planning_system" pkg="rosplan_planning_system" type="planner" respawn="false" output="screen">
 		<!-- directory for generated files -->
-	    <param name="data_path" value="$(find squirrel_planning_launch)/common/" />
-	    <param name="problem_path" value="$(find squirrel_planning_launch)/common/problem.pddl" />
+		<param name="data_path" value="$(find squirrel_planning_launch)/common/" />
+		<param name="problem_path" value="$(find squirrel_planning_launch)/common/problem.pddl" />
 		<param name="strl_file_path" value="$(find squirrel_planning_launch)/common/plan.strl" />
 
 		<!-- to run the planner -->
-	    <param name="planner_command" value="$(find rosplan_planning_system)/common/bin/popf-path-planner -gblind DOMAIN PROBLEM" />
+	        <param name="planner_command" value="$(find rosplan_planning_system)/common/bin/popf-path-planner -gblind DOMAIN PROBLEM" />
+		<!--param name="planner_command" value="cat $(find squirrel_planning_launch)/common/cluster_room_plan.pddl" /-->
 		<param name="generate_default_problem" value="true" />
 	</node>
 
-	<!-- simulation acitons (ALL TRUE) -->
+	<!-- Push interface -->
+	<node name="squirrel_planning_interface_pushing" pkg="squirrel_interface_manipulation" type="rppushServer" output="screen">
+		<param name="smash_action_server" value="/smash" />
+		<param name="push_action_server" value="/push" />
+	</node>
+
+	<!-- Move interface -->
+	<node name="rosplan_interface_movebase" pkg="rosplan_interface_movebase" type="rpmovebase" output="screen">
+		<param name="action_server" value="/move_base" />
+		<param name="pddl_action_name" value="goto_waypoint" />
+	</node>
+
+	<!-- Actual pusing in the simulation 
+	<include file = "$(find squirrel_push_manipulation)/launch/squirrel_push_manipulation.launch">
+		<arg name = "sim_" value="true" />
+	</include>
+
+	<node name = "fake_simulation_tracker" pkg = "squirrel_tracking" type = "fake_simulation_tracker.py">
+	</node>-->
+
+	<!-- simulation acitons (ALL TRUE) 
 	<node name="simulated_actions" pkg="squirrel_planning_execution" type="simulatedPDDLActionsNode" output="screen">
 		<param name="query_user" value="false" />
-		<param name="simulate_goto_waypoint" value="true"/>
+		<param name="simulate_goto_waypoint" value="false"/>
 		<param name="simulate_explore_waypoint" value="true"/>
 		<param name="simulate_clear_object" value="true"/>
 		<param name="simulate_classify_object" value="true"/>
 		<param name="simulate_put_object_in_box" value="true"/>
 		<param name="simulate_pickup_object" value="true"/>
 		<param name="simulate_drop_object" value="true"/>
-	</node>
+	</node>-->
 
 	<!-- RPSquirrelRecursion actions -->
 	<node name="squirrel_planning_execution" pkg="squirrel_planning_execution" type="sortClusteredRoom" output="screen">
